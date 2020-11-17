@@ -3,6 +3,8 @@
 #include <cstdlib>
 #include <my_basic.h>
 #include "basic_plugin.h"
+#include "basic_function.h"
+#include "my_basic.h"
 
 namespace basic_plugin {
 
@@ -16,6 +18,8 @@ namespace basic_plugin {
         mb_init();
         mb_open(&bas);
         mb_set_printer(bas, basic_print);
+        basic_register_command();
+
     }
 
     void plugin_exit() {
@@ -24,7 +28,7 @@ namespace basic_plugin {
     }
 
     int load_script(const char *script) {
-        mb_reset(&bas, true);
+   //     mb_reset(&bas, true);
         int load_stat = mb_load_string(bas, script, false);
 
         if (load_stat != MB_FUNC_OK) {
@@ -72,6 +76,14 @@ namespace basic_plugin {
         if (old_error_buffer != nullptr) free(old_error_buffer);
 
         plugins::last_error_buffer = new_error_buffer;
+    }
+
+    void basic_register_command(void){
+
+        mb_register_func(bas, "FABIAN",basic_fabian);
+        mb_register_func(bas, "OPENTERMINAL",basic_openTerminal);
+        mb_register_func(bas, "BASICECHO",basic_echo);
+
     }
 
 }

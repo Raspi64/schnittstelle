@@ -20,6 +20,7 @@ add_executable(schnittstelle
         src/plugins/lua/lua_plugin.cpp
         src/plugins/lua/lua_functions.cpp
         src/plugins/basic/basic_plugin.cpp
+        src/plugins/basic/basic_function.cpp
         src/schnitstelle.cpp
         lib/my_basic/my_basic.c
         )

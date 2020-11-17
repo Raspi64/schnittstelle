@@ -16,6 +16,8 @@ namespace basic_plugin {
     void mouse_event(int x, int y, MouseEvent::Type type);
 
     void keyboard_event(char key, KeyboardEvent::Type type);
+
+    void basic_register_command(void);
 }
 
 #endif //SCHNITTSTELLE_BASIC_PLUGIN_H
