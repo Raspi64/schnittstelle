@@ -11,30 +11,36 @@ static struct State {
 } state;
 
 
-static void default_lua_print(const char *string) {
-    printf("%s\n", string);
+static void lua_print(const char *string) {
+    char *output;
+    asprintf(&output, "%s\n", string);
+    state.printer(output);
+    free(output);
 }
 
-static int print(const char *__restrict format, ...) {
+static int basic_print(const char * format, ...) {
     va_list args;
+    va_start(args, format);
+    char* string = va_arg(args, char*);
     if (state.printer != nullptr) {
         char *output;
-        asprintf(&output, format, args);
+        asprintf(&output, format, string);
         state.printer(output);
         free(output);
     } else {
-        printf(format, args);
+        printf(format, string);
     }
+    va_end(args);
     return 0;
 }
 
 void sc_init() {
     mb_init();
     mb_open(&state.bas);
-    mb_set_printer(state.bas, printf);
+    mb_set_printer(state.bas, basic_print);
 
     lua_plugin::plugin_init();
-    lua_plugin::register_print_function(default_lua_print);
+    lua_plugin::register_print_function(lua_print);
 }
 
 int sc_exec_script(LANG lang, const char *script) {
@@ -49,7 +55,6 @@ int sc_exec_script(LANG lang, const char *script) {
 
 void sc_replace_print_function(print_function print) {
     state.printer = print;
-    lua_plugin::register_print_function(print);
 }
 
 void sc_exit() {
