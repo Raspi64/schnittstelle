@@ -25,58 +25,47 @@ static void our_print(const char *string) {
 
 void sc_init() {
     basic_plugin::plugin_init();
-    basic_plugin::register_print_function(our_print);
+    plugins::print_function_replacement = our_print;
 
     lua_plugin::plugin_init();
-    lua_plugin::register_print_function(our_print);
+    plugins::print_function_replacement = our_print;
 }
 
-Status sc_exec_script(LANG lang, const char *script) {
-    int load_err = 0;
-    int exec_err = 0;
 
-    switch (lang) {
-        case BASIC:
-            load_err = basic_plugin::load_script(script);
-            break;
-        case LUA:
-            load_err = lua_plugin::load_script(script);
-            break;
-    }
-
-    if (load_err != 0) {
-        switch (lang) {
-            case BASIC:
-                replace_error_message(basic_plugin::get_last_error());
-                break;
-            case LUA:
-                replace_error_message(lua_plugin::get_last_error());
-                break;
-        }
+static Status exec_basic_script(const char *script) {
+    if (basic_plugin::load_script(script) != 0) {
+        replace_error_message(plugins::last_error_buffer);
         return SYNTAX_ERROR;
     }
 
-    switch (lang) {
-        case BASIC:
-            exec_err = basic_plugin::exec_script();
-            break;
-        case LUA:
-            exec_err = lua_plugin::exec_script();
-            break;
-    }
-
-    if (exec_err != 0) {
-        switch (lang) {
-            case BASIC:
-                replace_error_message(basic_plugin::get_last_error());
-                break;
-            case LUA:
-                replace_error_message(lua_plugin::get_last_error());
-                break;
-        }
+    if (basic_plugin::exec_script() != 0) {
+        replace_error_message(plugins::last_error_buffer);
         return RUNTIME_ERROR;
     }
     return OK;
+}
+
+static Status exec_lua_script(const char *script) {
+    if (lua_plugin::load_script(script) != 0) {
+        replace_error_message(plugins::last_error_buffer);
+        return SYNTAX_ERROR;
+    }
+
+    if (lua_plugin::exec_script() != 0) {
+        replace_error_message(plugins::last_error_buffer);
+        return RUNTIME_ERROR;
+    }
+    return OK;
+}
+
+Status sc_exec_script(LANG lang, const char *script) {
+    switch (lang) {
+        case BASIC:
+            return exec_basic_script(script);
+        case LUA:
+        default:
+            return exec_lua_script(script);
+    }
 }
 
 
