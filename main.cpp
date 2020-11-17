@@ -1,13 +1,14 @@
 #include <lua_plugin.h>
 #include "my_basic.h"
 
-void print(const char *string);
+void lua_print(const char *string);
 
 int main() {
     struct mb_interpreter_t *bas = nullptr;
 
     mb_init();
     mb_open(&bas);
+    mb_set_printer(bas, printf);
     mb_load_string(bas, "print \"Hello from Basic\";", true);
     mb_run(bas, true);
     mb_close(&bas);
