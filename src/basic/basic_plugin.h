@@ -1,7 +1,7 @@
-#ifndef LUATEST_LUA_PLUGIN_H
-#define LUATEST_LUA_PLUGIN_H
+#ifndef SCHNITTSTELLE_BASIC_PLUGIN_H
+#define SCHNITTSTELLE_BASIC_PLUGIN_H
 
-namespace lua_plugin {
+namespace basic_plugin {
     typedef void (*print_function)(const char *);
 
     typedef void (*draw_function)(int x, int y, int r, int g, int b, int alpha, int size);
@@ -42,4 +42,4 @@ namespace lua_plugin {
     void keyboard_event(char key, KeyboardEvent::Type type);
 }
 
-#endif //LUATEST_LUA_PLUGIN_H
+#endif //SCHNITTSTELLE_BASIC_PLUGIN_H

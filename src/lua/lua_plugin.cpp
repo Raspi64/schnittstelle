@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <cstring>
 #include "lua_plugin.h"
 
 extern "C" {

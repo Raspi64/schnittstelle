@@ -22,8 +22,11 @@ int main() {
 }
 
 void run_and_print_error(const LANG &lang, const char *script) {
-    if (sc_exec_script(lang, script) != 0)
-        printf("%s\n", sc_get_last_error());
+    if (sc_exec_script(lang, script) != 0) {
+        printf("%s\n\n", sc_get_last_error());
+    } else{
+        printf("Exec: OK!\n\n");
+    }
 }
 
 

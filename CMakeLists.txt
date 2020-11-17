@@ -13,5 +13,11 @@ include_directories(lib/my_basic)
 include_directories(lib/lua-5.4/include)
 include_directories(src)
 
-add_executable(schnittstelle src/main.cpp src/schnitstelle.cpp src/lua/lua_plugin.cpp lib/my_basic/my_basic.c)
+add_executable(schnittstelle
+        src/main.cpp
+        src/schnitstelle.cpp
+        src/lua/lua_plugin.cpp
+        src/basic/basic_plugin.cpp
+        lib/my_basic/my_basic.c
+        )
 target_link_libraries(schnittstelle lualib "-ldl")
