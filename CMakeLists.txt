@@ -10,6 +10,7 @@ set_property(TARGET lualib PROPERTY IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/lib/l
 include_directories(lib/lua_plugin)
 include_directories(lib/my_basic)
 include_directories(lib/lua-5.4/include)
+include_directories(src)
 
-add_executable(schnittstelle main.cpp lib/lua_plugin/lua_plugin.cpp lib/my_basic/my_basic.c)
+add_executable(schnittstelle src/main.cpp src/schnitstelle.cpp lib/lua_plugin/lua_plugin.cpp lib/my_basic/my_basic.c)
 target_link_libraries(schnittstelle lualib "-ldl")
