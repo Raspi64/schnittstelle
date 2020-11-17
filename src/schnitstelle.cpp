@@ -24,15 +24,13 @@ static void our_print(const char *string) {
 }
 
 void sc_init() {
-    basic_plugin::plugin_init();
-    plugins::print_function_replacement = our_print;
-
-    lua_plugin::plugin_init();
-    plugins::print_function_replacement = our_print;
 }
 
 
 static Status exec_basic_script(const char *script) {
+    basic_plugin::plugin_init();
+    plugins::print_function_replacement = our_print;
+
     if (basic_plugin::load_script(script) != 0) {
         replace_error_message(plugins::last_error_buffer);
         return SYNTAX_ERROR;
@@ -42,10 +40,15 @@ static Status exec_basic_script(const char *script) {
         replace_error_message(plugins::last_error_buffer);
         return RUNTIME_ERROR;
     }
+
+    basic_plugin::plugin_exit();
     return OK;
 }
 
 static Status exec_lua_script(const char *script) {
+    lua_plugin::plugin_init();
+    plugins::print_function_replacement = our_print;
+
     if (lua_plugin::load_script(script) != 0) {
         replace_error_message(plugins::last_error_buffer);
         return SYNTAX_ERROR;
@@ -55,6 +58,8 @@ static Status exec_lua_script(const char *script) {
         replace_error_message(plugins::last_error_buffer);
         return RUNTIME_ERROR;
     }
+
+    lua_plugin::plugin_exit();
     return OK;
 }
 
@@ -89,6 +94,4 @@ void sc_replace_print_function(print_function print) {
 }
 
 void sc_exit() {
-    basic_plugin::plugin_exit();
-    lua_plugin::plugin_exit();
 }

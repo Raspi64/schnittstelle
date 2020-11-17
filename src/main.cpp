@@ -11,7 +11,7 @@ int main() {
     sc_replace_print_function(my_print);
     printf("\n");
     run_and_print_error(BASIC, "FABIAN\n");
-    run_and_print_error(BASIC, "RND'");
+    run_and_print_error(BASIC, "RND;");
 
     sc_exit();
 }
