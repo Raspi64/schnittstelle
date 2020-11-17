@@ -1,6 +1,12 @@
 #include <cstdlib>
 #include "lua_plugin.h"
 
+extern "C" {
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
+}
+
 namespace lua_plugin {
     static lua_State *L;
     static char *last_error_buffer = nullptr;
@@ -90,15 +96,16 @@ namespace lua_plugin {
         lua_close(L);
     }
 
-
-    int exec_script(const char *lua_script) {
+    int load_script(const char *lua_script){
         int load_stat = luaL_loadbuffer(L, lua_script, strlen(lua_script), lua_script);
 
         if (load_stat != LUA_OK) {
             set_error_message(lua_tostring(L, -1));
-            return load_stat;
         }
+        return load_stat;
+    }
 
+    int exec_script() {
         int exec_stat = lua_pcall(L, 0, 0, 0);
 
         if (exec_stat != LUA_OK) {
@@ -119,10 +126,6 @@ namespace lua_plugin {
 
     const char *get_last_error() {
         return last_error_buffer;
-    }
-
-    lua_State *get_state() {
-        return L;
     }
 
     void register_print_function(print_function print_func) {

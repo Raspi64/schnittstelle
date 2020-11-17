@@ -5,12 +5,6 @@
 #ifndef LUATEST_LUA_PLUGIN_H
 #define LUATEST_LUA_PLUGIN_H
 
-extern "C" {
-#include "lua.h"
-#include "lualib.h"
-#include "lauxlib.h"
-}
-
 #include <cstring>
 
 namespace lua_plugin {
@@ -39,11 +33,11 @@ namespace lua_plugin {
 
     void plugin_exit();
 
-    int exec_script(const char *lua_script);
+    int load_script(const char *lua_script);
+
+    int exec_script();
 
     const char *get_last_error();
-
-    lua_State *get_state();
 
     void register_print_function(print_function print_function_replacement);
 
