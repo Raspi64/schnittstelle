@@ -77,7 +77,7 @@ namespace basic_plugin {
     }
 
     void basic_register_command() {
-        mb_register_func(bas, "FABIAN", basic_fabian);
+        mb_register_func(bas, "BASICMAXIMUM", basic_maximum);
         mb_register_func(bas, "OPENTERMINAL", basic_openTerminal);
         mb_register_func(bas, "BASICECHO", basic_echo);
     }

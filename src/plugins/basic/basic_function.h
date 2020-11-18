@@ -8,5 +8,5 @@ namespace basic_plugin {
 
     int basic_openTerminal(struct mb_interpreter_t *, void **);
 
-    int basic_fabian(struct mb_interpreter_t *, void **);
+    int basic_maximum(struct mb_interpreter_t *, void **);
 }
