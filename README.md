@@ -18,7 +18,7 @@ Then you go to the basic_function.cpp and write there your new funktion:
 		return result
 	}	
 
-*NOTE* If your function dont need parameters so call
+*NOTE* If your function don't need parameters so call
 
 	int mb_attempt_func_begin(struct mb_interpreter_t* bas, void** ptr);
 
@@ -50,6 +50,7 @@ For return values:
  	int mb_push_value(struct mb_interpreter_t* bas, void** ptr, mb_value_t val);
 
 #### Example
+A simple echo-function: 
 
  	int basic_echo(struct mb_interpreter_t *bas, void **ptr) {
         	char* s;
