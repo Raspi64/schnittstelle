@@ -30,8 +30,6 @@ typedef luaL_Stream LStream;
 #define isclosed(p)    ((p)->closef == NULL)
 
 
-
-
 static FILE *getiofile(lua_State *L, const char *findex) {
     LStream *p;
     lua_getfield(L, LUA_REGISTRYINDEX, findex);
@@ -248,8 +246,6 @@ static int io_read(lua_State *L) {
 }
 
 
-
-
 /* }====================================================== */
 
 
@@ -295,7 +291,6 @@ static const luaL_Reg iolib[] = {
         {"write", io_write},
         {NULL, NULL}
 };
-
 
 
 LUAMOD_API int lua_io_lib(lua_State *L) {

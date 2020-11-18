@@ -27,7 +27,7 @@ namespace basic_plugin {
     }
 
     int load_script(const char *script) {
-        int load_stat = mb_load_string(bas, script, false);
+        int load_stat = mb_load_string(bas, script, true);
 
         if (load_stat != MB_FUNC_OK) {
             update_error_message();

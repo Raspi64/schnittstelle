@@ -17,7 +17,7 @@ namespace basic_plugin {
 
     void keyboard_event(char key, KeyboardEvent::Type type);
 
-    void basic_register_command(void);
+    void basic_register_command();
 }
 
 #endif //SCHNITTSTELLE_BASIC_PLUGIN_H

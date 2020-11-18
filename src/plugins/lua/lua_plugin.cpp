@@ -51,7 +51,7 @@ namespace lua_plugin {
         lua_close(L);
     }
 
-    int load_script(const char *lua_script){
+    int load_script(const char *lua_script) {
         int load_stat = luaL_loadbuffer(L, lua_script, strlen(lua_script), lua_script);
 
         if (load_stat != LUA_OK) {
