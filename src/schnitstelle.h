@@ -1,6 +1,8 @@
 #ifndef SCHNITTSTELLE_SCHNITSTELLE_H
 #define SCHNITTSTELLE_SCHNITSTELLE_H
 
+#include <future>
+
 typedef void (*print_function)(const char *);
 
 enum Status {
@@ -20,7 +22,11 @@ void sc_exit();
 
 void sc_replace_print_function(print_function);
 
-Status sc_exec_script(LANG lang, const char *script);
+std::future<Status> sc_exec_script(LANG lang, const char *script);
+
+bool is_running();
+
+void kill_current_task();
 
 const char *sc_get_last_error();
 

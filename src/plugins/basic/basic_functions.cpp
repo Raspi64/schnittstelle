@@ -1,6 +1,6 @@
 #include <cstdlib>
-#include <stdio.h>
-#include "basic_function.h"
+#include <cstdio>
+#include "basic_functions.h"
 #include "my_basic.h"
 
 

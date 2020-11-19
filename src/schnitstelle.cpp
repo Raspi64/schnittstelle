@@ -1,6 +1,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <thread>
 #include "schnitstelle.h"
 #include "lua_plugin.h"
 #include "basic_plugin.h"
@@ -63,14 +64,27 @@ static Status exec_lua_script(const char *script) {
     return OK;
 }
 
-Status sc_exec_script(LANG lang, const char *script) {
+static Status exec_script(LANG lang, char *script){
+    Status status;
     switch (lang) {
         case BASIC:
-            return exec_basic_script(script);
+            status = exec_basic_script(script);
+            break;
         case LUA:
         default:
-            return exec_lua_script(script);
+            status = exec_lua_script(script);
     }
+    free(script);
+    return status;
+}
+
+std::future<Status> sc_exec_script(LANG lang, const char *script) {
+    // copy script
+    char *script_copy;
+    asprintf(&script_copy, "%s", script);
+
+    // create future
+    return std::async(std::launch::async, [lang, script_copy] { return exec_script(lang, script_copy); });
 }
 
 
