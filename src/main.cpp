@@ -1,63 +1,72 @@
 
 #include <cstdio>
 #include "schnitstelle.h"
+#include <unistd.h>
 
 void my_print(const char *string);
 
 void run_and_print_error(const LANG &lang, const char *script);
 
 int main() {
-    sc_init();
-    sc_replace_print_function(my_print);
-    printf("\n");
+    sc_register_print_function(my_print);
+    printf("\n\nBasic 1:\n");
     run_and_print_error(BASIC, "I = BASICMAXIMUM(2,3)\n PRINT I\n");
+    printf("\n\nBasic 2:\n");
     run_and_print_error(BASIC, "BASICECHO(\"Hello World\")\n");
 
-    run_and_print_error(LUA,"print('Start 4')\n"
-                            "function sleep(n)\n"
-                            "  os.execute(\"sleep \" .. tonumber(n))\n"
-                            "end\n"
-                            "sleep(4)\n"
-                            "print('End 4')\n");
+    printf("\n\nLua 1:\n");
+    run_and_print_error(
+            LUA,
+            "print('Start 2')\n"
+            "function sleep(n)\n"
+            "  os.execute(\"sleep \" .. tonumber(n))\n"
+            "end\n"
+            "sleep(2)\n"
+            "print('End 2')\n"
+    );
 
-    run_and_print_error(LUA,"print('Start 1')\n"
-                            "function sleep(n)\n"
-                            "  os.execute(\"sleep \" .. tonumber(n))\n"
-                            "end\n"
-                            "sleep(0.5)\n"
-                            "print('End 1')\n");
+    printf("\n\nLua 2:\n");
+    sc_start_script(LUA, "os.execute(\"sleep \" .. 2)\n");
+    sc_start_script(LUA, "os.execute(\"sleep \" .. 2)\n");
 
-    sc_exit();
+    printf("\n\nLua 3:\n");
+    run_and_print_error(
+            LUA,
+            "function sleep(n)\nos.execute(\"sleep \" .. tonumber(n))\nend\n"
+            "print('Start 1')\n"
+            "sleep(0.2)\n"
+            "print('End 1')\n"
+    );
 }
 
 void run_and_print_error(const LANG &lang, const char *script) {
-    std::future<Status> future = sc_exec_script(lang, script);
+    sc_start_script(lang, script);
 
-    if (!future.valid()){
-        printf("Error: invalid future!\n");
-        return;
+    int i = 0;
+    for (; i < 100 && (sc_get_status() == NOT_STARTED || sc_get_status() == LOADING || sc_get_status() == RUNNING); ++i) {
+        usleep(10000); // 10 ms
     }
+    if (sc_get_status_message() != nullptr)printf("%s\n",sc_get_status_message());
 
-    switch (future.wait_for(std::chrono::seconds(1))) {
-        case std::future_status::ready:
-            switch (future.get()) {
-                case OK:
-                    printf("Exec: OK!\n\n");
-                    break;
-                case SYNTAX_ERROR:
-                case RUNTIME_ERROR:
-                    printf("%s\n\n", sc_get_last_error());
-                    break;
-            }
+    switch (sc_get_status()) {
+        case COMPLETED_OK:
+            printf("Exec: OK!\n");
             break;
-        case std::future_status::timeout:
-            printf("Error: future took too long to resolve!\n");
+        case LOAD_ERROR:
+            printf("Load: Error!\n");
             break;
-        case std::future_status::deferred:
-            printf("Error: future hasn't been started!\n");
+        case RUN_ERROR:
+            printf("Exec: Error!\n");
+            printf("Status: %s\n", sc_get_status_message());
             break;
-    };
-
+        case NOT_STARTED:
+        case LOADING:
+        case RUNNING:
+            printf("Timeout: ");
+            sc_kill_current_task();
+            break;
+    }
+    printf("Running took %d ms.\n", 10 * i);
 }
 
 

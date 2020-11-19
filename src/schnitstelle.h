@@ -6,9 +6,12 @@
 typedef void (*print_function)(const char *);
 
 enum Status {
-    OK,
-    SYNTAX_ERROR,
-    RUNTIME_ERROR,
+    NOT_STARTED, // No program has been executed so far
+    LOADING, // The user-program is currently loading/parsing
+    LOAD_ERROR, // The user-program could not be loaded
+    RUNNING, // The user-program is currently running
+    RUN_ERROR, // There was an error when running the user-program
+    COMPLETED_OK, // Program has exited successfully
 };
 
 enum LANG {
@@ -16,18 +19,14 @@ enum LANG {
     LUA,
 };
 
-void sc_init();
+void sc_register_print_function(print_function);
 
-void sc_exit();
+void sc_start_script(LANG lang, const char *script);
 
-void sc_replace_print_function(print_function);
+Status sc_get_status();
 
-std::future<Status> sc_exec_script(LANG lang, const char *script);
+void sc_kill_current_task();
 
-bool is_running();
-
-void kill_current_task();
-
-const char *sc_get_last_error();
+const char *sc_get_status_message();
 
 #endif //SCHNITTSTELLE_SCHNITSTELLE_H
