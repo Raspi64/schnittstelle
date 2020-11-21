@@ -14,30 +14,32 @@ void my_clear();
 
 void run_and_print_error(const LANG &lang, const char *script);
 
-const char *lua_script =
-        "function sleep(n)\n"
-        "    os.execute(\"sleep \" .. tonumber(n))\n"
-        "end\n"
-        "\n"
-        "function sub(r, g, b, t)\n"
-        "    for i = 0, 250, 10 do\n"
-        "        draw(i, i, r, g, b, 255, 10)\n"
-        "        draw(i, 500 - i, r, g, b, 255, 10)\n"
-        "        draw(500 - i, i, r, g, b, 255, 10)\n"
-        "        draw(500 - i, 500 - i, r, g, b, 255, 10)\n"
-        "        sleep(t)\n"
-        "    end\n"
-        "end\n"
-        "\n"
-        "function drawer()\n"
-        "    while true do\n"
-        "        sub(255, 0, 0, 0.05)\n"
-        "        sub(0, 255, 0, 0.05)\n"
-        "        sub(0, 0, 255, 0.05)\n"
-        "    end\n"
-        "end\n"
-        "\n"
-        "drawer()";
+char *loadfile(char *file) {
+    FILE *fp;
+    long lSize;
+    char *buffer;
+
+    fp = fopen(file, "rb");
+    if (!fp) perror(file), exit(1);
+
+    fseek(fp, 0L, SEEK_END);
+    lSize = ftell(fp);
+    rewind(fp);
+
+    /* allocate memory for entire content */
+    buffer = (char *) calloc(1, lSize + 1);
+    if (!buffer) fclose(fp), fputs("memory alloc fails", stderr), exit(1);
+
+    /* copy the file into the buffer */
+    if (1 != fread(buffer, lSize, 1, fp))
+        fclose(fp), free(buffer), fputs("entire read fails", stderr), exit(1);
+
+    /* do your work here, buffer is a string contains the whole text */
+
+    fclose(fp);
+    return buffer;
+}
+
 
 int main() {
     gui = new Gui();
@@ -46,7 +48,9 @@ int main() {
 //    sc_register_print_function(my_print);
     sc_register_draw_function(my_draw);
     sc_register_clear_function(my_clear);
+    char *lua_script = loadfile("../src/drawer.lua");
     sc_start_script(LUA, lua_script);
+    free(lua_script);
 
     gui->graphic->add_pixel(10, 10, 255, 0, 0, 128, 10);
 
