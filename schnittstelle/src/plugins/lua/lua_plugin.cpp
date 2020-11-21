@@ -14,22 +14,6 @@ namespace lua_plugin {
 
     static void set_error_message(const char *error_message);
 
-    int lua_os_exit(lua_State *_) {
-        printf("os.exit() is not allowed.\n");
-        return 0;
-    }
-
-    int lua_io_read(lua_State *_) {
-        printf("io.read() is not allowed.\n");
-        return 0;
-    }
-
-    int lua_io_write(lua_State *_) {
-        printf("io.write() is not allowed.\n");
-        return 0;
-    }
-
-
     static void replace_function_in_table(const char *table, const char *field, lua_CFunction function) {
         lua_getglobal(L, table);
         lua_pushstring(L, field);
@@ -45,6 +29,8 @@ namespace lua_plugin {
         replace_function_in_table("os", "exit", lua_os_exit); // replaces `os.exit` with `nop_function`
         replace_function_in_table("io", "read", lua_io_read);
         replace_function_in_table("io", "write", lua_io_write);
+        lua_register(L,"draw", lua_draw);
+        lua_register(L,"clear", lua_clear);
     }
 
     void plugin_exit() {

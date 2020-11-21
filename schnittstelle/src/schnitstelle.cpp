@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <csignal>
 #include "schnitstelle.h"
+#include "plugins.h"
 #include "lua_plugin.h"
 #include "basic_plugin.h"
 
@@ -103,7 +104,7 @@ void sc_start_script(LANG lang, const char *script) {
 
 static void replace_status(Status new_status, const char *message) {
     // save old message
-    char *old_message;
+    char *old_message = nullptr;
     if (status_message != nullptr) {
         old_message = status_message;
     }
@@ -126,8 +127,16 @@ const char *sc_get_status_message() {
     return status_message;
 }
 
-void sc_register_print_function(print_function print) {
-    printer = print;
+void sc_register_print_function(print_function func) {
+    printer = func;
+}
+
+void sc_register_draw_function(draw_function func) {
+    plugins::draw_function_value = func;
+}
+
+void sc_register_clear_function(clear_function func) {
+    plugins::clear_function_value = func;
 }
 
 Status sc_get_status() {

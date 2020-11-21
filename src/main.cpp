@@ -2,47 +2,68 @@
 #include <cstdio>
 #include "schnitstelle.h"
 #include <unistd.h>
+#include <Gui.hpp>
+
+Gui *gui;
 
 void my_print(const char *string);
 
+void my_draw(int x, int y, int red, int green, int blue, int alpha, int size);
+
+void my_clear();
+
 void run_and_print_error(const LANG &lang, const char *script);
 
+const char *lua_script =
+        "function sleep(n)\n"
+        "    os.execute(\"sleep \" .. tonumber(n))\n"
+        "end\n"
+        "\n"
+        "function sub(r, g, b, t)\n"
+        "    for i = 0, 250, 10 do\n"
+        "        draw(i, i, r, g, b, 255, 10)\n"
+        "        draw(i, 500 - i, r, g, b, 255, 10)\n"
+        "        draw(500 - i, i, r, g, b, 255, 10)\n"
+        "        draw(500 - i, 500 - i, r, g, b, 255, 10)\n"
+        "        sleep(t)\n"
+        "    end\n"
+        "end\n"
+        "\n"
+        "function drawer()\n"
+        "    while true do\n"
+        "        sub(255, 0, 0, 0.05)\n"
+        "        sub(0, 255, 0, 0.05)\n"
+        "        sub(0, 0, 255, 0.05)\n"
+        "    end\n"
+        "end\n"
+        "\n"
+        "drawer()";
+
 int main() {
-    sc_register_print_function(my_print);
-    printf("\n\nBasic 1:\n");
-    run_and_print_error(BASIC, "I = BASICMAXIMUM(2,3)\n PRINT I\n");
-    usleep(100000); // 100 ms
-    printf("\n\nBasic 2:\n");
-    run_and_print_error(BASIC, "BASICECHO(\"Hello World\")\n");
-    usleep(100000); // 100 ms
+    gui = new Gui();
+    gui->initialize();
 
-    printf("\n\nLua 1:\n");
-    run_and_print_error(
-            LUA,
-            "print('Start 2')\n"
-            "function sleep(n)\n"
-            "  os.execute(\"sleep \" .. tonumber(n))\n"
-            "end\n"
-            "sleep(2)\n"
-            "print('End 2')\n"
-    );
-    usleep(100000); // 100 ms
+//    sc_register_print_function(my_print);
+    sc_register_draw_function(my_draw);
+    sc_register_clear_function(my_clear);
+    sc_start_script(LUA, lua_script);
 
-    printf("\n\nLua 2:\n");
-    sc_start_script(LUA, "os.execute(\"sleep \" .. 2)\n");
-    usleep(100000); // 100 ms
-    sc_start_script(LUA, "os.execute(\"sleep \" .. 2)\n");
-    usleep(100000); // 100 ms
+    gui->graphic->add_pixel(10, 10, 255, 0, 0, 128, 10);
 
-    printf("\n\nLua 3:\n");
-    run_and_print_error(
-            LUA,
-            "function sleep(n)\nos.execute(\"sleep \" .. tonumber(n))\nend\n"
-            "print('Start 1')\n"
-            "sleep(0.2)\n"
-            "print('End 1')\n"
-    );
-    usleep(100000); // 100 ms
+    bool running = true;
+    while (running) {
+        running = gui->tick() == 0;
+    }
+    gui->destroy();
+}
+
+void my_draw(int x, int y, int red, int green, int blue, int alpha, int size) {
+    gui->graphic->add_pixel(x, y, red, green, blue, alpha, size);
+//    printf("GUI Draw!\n");
+}
+
+void my_clear() {
+    gui->graphic->clear_pixels();
 }
 
 void run_and_print_error(const LANG &lang, const char *script) {
@@ -80,12 +101,6 @@ void run_and_print_error(const LANG &lang, const char *script) {
 void my_print(const char *string) {
     char *out;
     asprintf(&out, "%s", string);
-
-    for (int i = 0; out[i] != '\0'; i++) {
-        if (out[i] == '\n') {
-            out[i] = '\t';
-        }
-    }
-    printf("Print: \"%s\"\n", out);
+    gui->console->print(out);
     free(out);
 }

@@ -5,6 +5,10 @@
 
 typedef void (*print_function)(const char *);
 
+typedef void (*draw_function)(int x, int y, int red, int green, int blue, int alpha, int size);
+
+typedef void (*clear_function)();
+
 enum Status {
     NOT_STARTED, // No program has been executed so far
     LOADING, // The user-program is currently loading/parsing
@@ -20,6 +24,10 @@ enum LANG {
 };
 
 void sc_register_print_function(print_function);
+
+void sc_register_draw_function(draw_function);
+
+void sc_register_clear_function(clear_function);
 
 void sc_start_script(LANG lang, const char *script);
 

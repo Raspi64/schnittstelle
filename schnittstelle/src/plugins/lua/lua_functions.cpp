@@ -1,10 +1,23 @@
 
 #include <cstdio>
 #include <cstdlib>
-#include "lua_plugin.h"
+#include <lua.hpp>
+#include "plugins.h"
 #include "lua_functions.h"
 
 namespace lua_plugin {
+    int lua_os_exit(lua_State *state) {
+        return luaL_error(state, "os.exit() is not allowed");
+    }
+
+    int lua_io_read(lua_State *state) {
+        return luaL_error(state, "io.read() is not allowed");
+    }
+
+    int lua_io_write(lua_State *state) {
+        return luaL_error(state, "io.write() is not allowed");
+    }
+
     int lua_print(lua_State *state) {
         char *return_string;
         asprintf(&return_string, "");
@@ -47,6 +60,38 @@ namespace lua_plugin {
         if (plugins::print_function_replacement != nullptr) {
             plugins::print_function_replacement(return_string);
         }
+        return 0;
+    }
+
+    int lua_draw(lua_State *state) {
+        if (lua_gettop(state) != 7) {
+            return luaL_error(state, "expecting parameters: x,y,r,g,b,a,size");
+        }
+        for (int i = 1; i <= 7; ++i) {
+            if (!lua_isnumber(state, i)) {
+                return luaL_error(state, "expecting only numbers as parameters");
+            }
+        }
+        int x = lua_tointeger(state, 1);
+        int y = lua_tointeger(state, 2);
+        int red = lua_tointeger(state, 3);
+        int green = lua_tointeger(state, 4);
+        int blue = lua_tointeger(state, 5);
+        int alpha = lua_tointeger(state, 6);
+        int size = lua_tointeger(state, 7);
+
+        plugins::draw_function_value(x, y, red, green, blue, alpha, size);
+
+        return 0;
+    }
+
+    int lua_clear(lua_State *state) {
+        if (lua_gettop(state) != 0) {
+            return luaL_error(state, "expecting no parameters");
+        }
+
+        plugins::clear_function_value();
+
         return 0;
     }
 };
