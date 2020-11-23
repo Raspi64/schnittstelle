@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.17)
 project(schnittstelle)
+project(schnittstelle_test)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -55,8 +56,23 @@ add_executable(schnittstelle
         gui/lib/imgui/backends/imgui_impl_sdl.cpp
         )
 
+
+add_executable(schnittstelle_test
+        schnittstelle/src/main.cpp
+        # Schnittstelle files
+        schnittstelle/src/plugins/plugins.cpp
+        schnittstelle/src/plugins/lua/lua_plugin.cpp
+        schnittstelle/src/plugins/lua/lua_functions.cpp
+        schnittstelle/src/plugins/basic/basic_plugin.cpp
+        schnittstelle/src/plugins/basic/basic_functions.cpp
+        schnittstelle/src/schnitstelle.cpp
+        # my_basic files
+        schnittstelle/lib/my_basic/my_basic.c
+        )
+
 # Link pthread
-link_libraries(schnittstelle "-lpthread")
+target_link_libraries(schnittstelle "-lpthread")
+target_link_libraries(schnittstelle_test "-lpthread")
 
 # Link SDL2
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -73,5 +89,6 @@ target_link_libraries(schnittstelle ${FREETYPE_LIBRARIES})
 add_library(lualib SHARED IMPORTED)
 set_property(TARGET lualib PROPERTY IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/schnittstelle/lib/lua-5.4/liblua54.so")
 target_link_libraries(schnittstelle "-ldl" lualib)
+target_link_libraries(schnittstelle_test "-ldl" lualib)
 
 add_compile_options("-Wall -Wextra -pedantic -Werror")
