@@ -59,6 +59,8 @@ namespace lua_plugin {
 
         if (plugins::print_function_replacement != nullptr) {
             plugins::print_function_replacement(return_string);
+        } else {
+            printf("%s", return_string);
         }
         free(return_string);
         return 0;
