@@ -32,17 +32,18 @@ static void exec_basic_script(const char *script) {
     basic_plugin::plugin_init();
     plugins::print_function_replacement = our_print;
 
-    if (basic_plugin::load_script(script) != 0) {
+    if (basic_plugin::load_script(script) == 0) {
+        replace_status(RUNNING, "Running...");
+        if (basic_plugin::exec_script() == 0) {
+            replace_status(COMPLETED_OK, "Done!");
+        } else {
+            replace_status(RUN_ERROR, plugins::last_error_buffer);
+        }
+    } else {
         replace_status(LOAD_ERROR, plugins::last_error_buffer);
     }
 
-    replace_status(RUNNING, "Running...");
-    if (basic_plugin::exec_script() != 0) {
-        replace_status(RUN_ERROR, plugins::last_error_buffer);
-    }
-
     basic_plugin::plugin_exit();
-    replace_status(COMPLETED_OK, "Done!");
 }
 
 static void exec_lua_script(const char *script) {
@@ -50,15 +51,15 @@ static void exec_lua_script(const char *script) {
     lua_plugin::plugin_init();
     plugins::print_function_replacement = our_print;
 
-    if (lua_plugin::load_script(script) != 0) {
-        replace_status(LOAD_ERROR, plugins::last_error_buffer);
-    }
-
-    replace_status(RUNNING, "Running...");
-    if (lua_plugin::exec_script() == 0) {
-        replace_status(COMPLETED_OK, "Done!");
+    if (lua_plugin::load_script(script) == 0) {
+        replace_status(RUNNING, "Running...");
+        if (lua_plugin::exec_script() == 0) {
+            replace_status(COMPLETED_OK, "Done!");
+        } else {
+            replace_status(RUN_ERROR, plugins::last_error_buffer);
+        }
     } else {
-        replace_status(RUN_ERROR, plugins::last_error_buffer);
+        replace_status(LOAD_ERROR, plugins::last_error_buffer);
     }
 
     lua_plugin::plugin_exit();
