@@ -52,8 +52,6 @@ int main() {
     sc_start_script(LUA, lua_script);
     free(lua_script);
 
-    gui->graphic->add_pixel(10, 10, 255, 0, 0, 128, 10);
-
     bool running = true;
     while (running) {
         running = gui->tick() == 0;
