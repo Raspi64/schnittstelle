@@ -6,16 +6,8 @@
 #include "lua_functions.h"
 
 namespace lua_plugin {
-    int lua_os_exit(lua_State *state) {
-        return luaL_error(state, "os.exit() is not allowed");
-    }
-
-    int lua_io_read(lua_State *state) {
-        return luaL_error(state, "io.read() is not allowed");
-    }
-
-    int lua_io_write(lua_State *state) {
-        return luaL_error(state, "io.write() is not allowed");
+    int lua_function_not_allowed(lua_State *state) {
+        return luaL_error(state, "this function is not allowed");
     }
 
     int lua_print(lua_State *state) {

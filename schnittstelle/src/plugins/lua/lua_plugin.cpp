@@ -23,12 +23,21 @@ namespace lua_plugin {
 
     void plugin_init() {
         L = luaL_newstate();
-        luaL_openlibs(L);
+        luaopen_base(L);
+        // luaopen_package(L); // blocked
+        luaopen_coroutine(L);
+        luaopen_table(L);
+        // luaopen_io(L); // blocked
+        luaopen_os(L);
+        luaopen_string(L);
+        luaopen_math(L);
+        luaopen_utf8(L);
+        // luaopen_debug(L); // blocked
 
         lua_register(L, "print", lua_print);
-        replace_function_in_table("os", "exit", lua_os_exit); // replaces `os.exit` with `nop_function`
-        replace_function_in_table("io", "read", lua_io_read);
-        replace_function_in_table("io", "write", lua_io_write);
+        replace_function_in_table("os", "exit", lua_function_not_allowed);
+        replace_function_in_table("io", "read", lua_function_not_allowed);
+        replace_function_in_table("io", "write", lua_function_not_allowed);
         lua_register(L,"draw", lua_draw);
         lua_register(L,"clear", lua_clear);
     }

@@ -6,11 +6,7 @@ extern "C" {
 }
 
 namespace lua_plugin {
-    int lua_os_exit(lua_State *state);
-
-    int lua_io_read(lua_State *state);
-
-    int lua_io_write(lua_State *state);
+    int lua_function_not_allowed(lua_State *state);
 
     int lua_print(lua_State *state);
 
