@@ -38,6 +38,17 @@ namespace lua_plugin {
         replace_function_in_table("os", "exit", lua_function_not_allowed);
         replace_function_in_table("io", "read", lua_function_not_allowed);
         replace_function_in_table("io", "write", lua_function_not_allowed);
+
+        replace_function_in_table("base", "collectgarbage", lua_function_not_allowed);
+        replace_function_in_table("base", "dofile", lua_function_not_allowed);
+        replace_function_in_table("base", "load", lua_function_not_allowed);
+        replace_function_in_table("base", "loadfile", lua_function_not_allowed);
+        replace_function_in_table("base", "require", lua_function_not_allowed);
+        replace_function_in_table("os", "execute", lua_function_not_allowed);
+        replace_function_in_table("os", "remove", lua_function_not_allowed);
+        replace_function_in_table("os", "rename", lua_function_not_allowed);
+        replace_function_in_table("os", "setlocale", lua_function_not_allowed);
+        replace_function_in_table("os", "tmpname", lua_function_not_allowed);
         lua_register(L,"draw", lua_draw);
         lua_register(L,"clear", lua_clear);
     }
